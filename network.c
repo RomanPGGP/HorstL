@@ -31,7 +31,7 @@
 #include "util.h"
 #include "channel.h"
 #include "network.h"
-#include "display.h"
+//#include "display.h"
 
 extern struct config conf;
 

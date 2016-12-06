@@ -34,7 +34,7 @@
 #include "capture.h"
 #include "protocol_parser.h"
 #include "network.h"
-#include "display.h"    //QUITAR
+//#include "display.h"    
 #include "wlan_util.h"
 #include "ieee80211_util.h"
 #include "control.h"
@@ -432,8 +432,8 @@ static void receive_any(const sigset_t *const waitmask)
 		err(1, "select()");
 
 	/* stdin */
-	if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)
-		handle_user_input();
+	/*if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)
+		handle_user_input();*/
 
 	/* local packet or client */
 	if (FD_ISSET(mon, &read_fds)) {
