@@ -34,7 +34,7 @@
 #include "capture.h"
 #include "protocol_parser.h"
 #include "network.h"
-#include "display.h"
+#include "display.h"    //QUITAR
 #include "wlan_util.h"
 #include "ieee80211_util.h"
 #include "control.h"
@@ -103,7 +103,7 @@ printlog(const char *fmt, ...)
 	else {
 		/* fix up string for display log */
 		buf[0] = '\n';
-		display_log(buf);
+		//display_log(buf);
 	}
 }
 
@@ -324,12 +324,12 @@ void handle_packet(struct packet_info* p)
 {
 	struct node_info* n = NULL;
 
-	/* filter on server side only */
+	/* filter on server side only 
 	if (conf.serveraddr[0] == '\0' && filter_packet(p)) {
 		if (!conf.quiet && !conf.paused && !conf.debug)
 			update_display_clock();
 		return;
-	}
+	}*/
 
 	fixup_packet_channel(p);
 
@@ -365,8 +365,8 @@ void handle_packet(struct packet_info* p)
 	update_spectrum(p, n);
 	update_essids(p, n);
 
-	if (!conf.quiet && !conf.debug)
-		update_display(p);
+	/*if (!conf.quiet && !conf.debug)
+		update_display(p);*/
 }
 
 static void local_receive_packet(int fd, unsigned char* buffer, size_t bufsize)
@@ -423,9 +423,9 @@ static void receive_any(const sigset_t *const waitmask)
 	ret = pselect(mfd, &read_fds, &write_fds, &excpt_fds, &ts, waitmask);
 	if (ret == -1 && errno == EINTR) /* interrupted */
 		return;
-	if (ret == 0) { /* timeout */
+	if (ret == 0) {  
 		if (!conf.quiet && !conf.debug)
-			update_display_clock();
+			//update_display_clock();
 		return;
 	}
 	else if (ret < 0) /* error */
@@ -512,8 +512,8 @@ static void exit_handler(void)
 	if (!conf.debug)
 		net_finish();
 
-	if (!conf.quiet && !conf.debug)
-		finish_display();
+	/*if (!conf.quiet && !conf.debug)
+		finish_display();*/
 
 	ifctrl_finish();
 }
@@ -695,8 +695,8 @@ int main(int argc, char** argv)
 
 	printf("Max PHY rate: %d Mbps\n", conf.max_phy_rate/10);
 
-	if (!conf.quiet && !conf.debug)
-		init_display();
+	/*if (!conf.quiet && !conf.debug)
+		init_display();*/
 
 	if (conf.serveraddr[0] == '\0' && conf.port && conf.allow_client)
 		net_init_server_socket(conf.port);
@@ -727,8 +727,8 @@ int main(int argc, char** argv)
 			if (!conf.paused && channel_auto_change()) {
 				net_send_channel_config();
 				update_spectrum_durations();
-				if (!conf.quiet && !conf.debug)
-					update_display(NULL);
+				/*if (!conf.quiet && !conf.debug)
+					update_display(NULL);*/
 
 				if (channel_get_chan(conf.channel_idx) == conf.channel_set_num
 				    && conf.channel_scan_rounds > 0)
@@ -747,8 +747,8 @@ void main_pause(int pause)
 
 void main_reset(void)
 {
-	if (!conf.quiet && !conf.debug)
-		display_clear();
+	/*if (!conf.quiet && !conf.debug)
+		display_clear();*/
 	printlog("- RESET -");
 	free_lists();
 	essids.split_active = 0;
