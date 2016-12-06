@@ -30,15 +30,15 @@ OBJS=						   \
 	channel.o				   \
 	conf_options.o				   \
 	control.o				   \
-	display-channel.o			   \
-	display-essid.o				   \
-	display-filter.o			   \
-	display-help.o				   \
-	display-history.o			   \
-	display-main.o				   \
-	display-spectrum.o			   \
-	display-statistics.o			   \
-	display.o				   \
+#	display-channel.o			   \
+#	display-essid.o				   \
+#	display-filter.o			   \
+#	display-help.o				   \
+#	display-history.o			   \
+#	display-main.o				   \
+#	display-spectrum.o			   \
+#	display-statistics.o			   \
+#	display.o				   \
 	essid.o					   \
 	ieee80211_util.o			   \
 	ifctrl-ioctl.o			   	   \
