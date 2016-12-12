@@ -28,6 +28,7 @@
 #include <err.h>
 #include <sys/socket.h>
 #include <net/if.h>
+#include <stdarg.h>
 
 #include "main.h"
 #include "util.h"
