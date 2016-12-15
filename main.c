@@ -211,7 +211,9 @@ static void write_to_file(struct packet_info* p)
 {
 	char buf[40];
 	int i;
-	struct tm* ltm = localtime(&the_time.tv_sec);
+	time_t rawtime;
+	time( &rawtime );
+	struct tm* ltm = localtime( &rawtime );
 
 	//timestamp, e.g. 2015-05-16 15:05:44.338806 +0300
 	i = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ltm);
