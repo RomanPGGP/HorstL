@@ -821,7 +821,7 @@ void dumpfile2_open(const char* name)
 	if (DF == NULL)
 		err(1, "Couldn't open dump file");
 
-	fprintf(DF, "TIME, WLAN TYPE, MAC SRC, SIGNAL ");
+	fprintf(DF, "TIME, WLAN TYPE, MAC SRC, SIGNAL\n");
 }
 
 
