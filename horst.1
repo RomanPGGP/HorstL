@@ -37,6 +37,7 @@ horst \- Highly Optimized Radio Scanning Tool
 .RB [\| \-p
 .IR port \|]
 .RB [\| \-o
+.RB [\| \-k
 .IR file \|]
 .RB [\| \-X
 .IR name \|]
@@ -161,6 +162,9 @@ Use the specified port (default: 4444) for client/server connections.
 .BI \-o\  filename
 Write a information about each received packet into file. Note that you can send
 to STDOUT by using \fB-o /dev/stdout\fP. See OUTPUT FILE FORMAT below.
+.TP
+.BI \-k\  filename
+Write a information about each received packet into REDUCED file.
 .TP
 .BI \-X
 Accept control commands on a named pipe (default /tmp/horst).

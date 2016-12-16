@@ -356,6 +356,7 @@ printlog(const char *fmt, ...);
 void main_pause(int pause);
 void main_reset(void);
 void dumpfile_open(const char* name);
+void dumpfile2_open(const char* name);
 const char* mac_name_lookup(const unsigned char* mac, int shorten_mac);
 
 #endif

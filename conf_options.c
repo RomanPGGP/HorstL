@@ -68,6 +68,11 @@ static bool conf_outfile(const char* value) {
 	return true;
 }
 
+static bool conf2_outfile(const char* value) {
+	dumpfile2_open(value);
+	return true;
+}
+
 static bool conf_node_timeout(const char* value) {
 	conf.node_timeout = atoi(value);
 	return true;
@@ -305,6 +310,7 @@ static struct conf_option conf_options[] = {
 	{ 'd', "display_interval",	1, "100", 	conf_display_interval },
 	{ 'V', "display_view",		1, NULL, 	conf_display_view },
 	{ 'o', "outfile", 		1, NULL,	conf_outfile },
+	{ 'k', "outfile2",      1, NULL,    conf2_outfile},
 	{ 't', "node_timeout", 		1, "60",	conf_node_timeout },
 	{ 'b', "receive_buffer",	1, NULL,	conf_receive_buffer },	// NOT dynamic
 	{ 'C', "channel",		1, NULL, 	conf_channel_set },

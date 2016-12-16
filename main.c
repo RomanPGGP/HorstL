@@ -57,6 +57,7 @@ struct config conf;
 struct timespec the_time;
 
 int mon; /* monitoring socket */
+int dufi;
 
 static FILE* DF = NULL;
 
@@ -220,19 +221,30 @@ static void write_to_file(struct packet_info* p)
 	i += snprintf(buf + i, sizeof(buf) - i, ".%06ld", (long)(the_time.tv_nsec / 1000));
 	i += strftime(buf + i, sizeof(buf) - i, " %z", ltm);
 	fprintf(DF, "%s, ", buf);
+	
+	if(dufi == 0)
+	{
+		fprintf(DF, "%s, %s, ",
+			get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
+		fprintf(DF, "%s, ", ether_sprintf(p->wlan_dst));
+		fprintf(DF, "%s, ", ether_sprintf(p->wlan_bssid));
+		fprintf(DF, "%x, %d, %d, %d, %d, ",
+			p->pkt_types, p->phy_signal, p->wlan_len, p->phy_rate, p->phy_freq);
+		fprintf(DF, "%016llx, ", (unsigned long long)p->wlan_tsf);
+		fprintf(DF, "%s, %d, %d, %d, %d, %d, ",
+			p->wlan_essid, p->wlan_mode, p->wlan_channel,
+			p->wlan_wep, p->wlan_wpa, p->wlan_rsn);
+		fprintf(DF, "%s, %s\n", ip_sprintf(p->ip_src), ip_sprintf(p->ip_dst));
+	}
+	else
+	{
+		fprintf(DF, "%s, %s, ",
+			get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
+		fprintf(DF, " %d ",p->phy_signal);
+	}
 
-	fprintf(DF, "%s, %s, ",
-		get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
-	fprintf(DF, "%s, ", ether_sprintf(p->wlan_dst));
-	fprintf(DF, "%s, ", ether_sprintf(p->wlan_bssid));
-	fprintf(DF, "%x, %d, %d, %d, %d, ",
-		p->pkt_types, p->phy_signal, p->wlan_len, p->phy_rate, p->phy_freq);
-	fprintf(DF, "%016llx, ", (unsigned long long)p->wlan_tsf);
-	fprintf(DF, "%s, %d, %d, %d, %d, %d, ",
-		p->wlan_essid, p->wlan_mode, p->wlan_channel,
-		p->wlan_wep, p->wlan_wpa, p->wlan_rsn);
-	fprintf(DF, "%s, %s\n", ip_sprintf(p->ip_src), ip_sprintf(p->ip_dst));
 	fflush(DF);
+	
 }
 
 /* return true if packet is filtered */
@@ -765,6 +777,7 @@ void main_reset(void)
 
 void dumpfile_open(const char* name)
 {
+	dufi = 0;
 	if (DF != NULL) {
 		fclose(DF);
 		DF = NULL;
@@ -787,6 +800,28 @@ void dumpfile_open(const char* name)
 	fprintf(DF, "WEP, WPA1, RSN (WPA2), IP SRC, IP DST\n");
 
 	printlog("- Writing to outfile %s", conf.dumpfile);
+}
+void dumpfile2_open(const char* name)
+{
+	dufi = 1;
+	if (DF != NULL) {
+		fclose(DF);
+		DF = NULL;
+	}
+
+	if (name == NULL || strlen(name) == 0) {
+		printlog("- Not writing outfile");
+		conf.dumpfile[0] = '\0';
+		return;
+	}
+
+	strncpy(conf.dumpfile, name, MAX_CONF_VALUE_STRLEN);
+	conf.dumpfile[MAX_CONF_VALUE_STRLEN] = '\0';
+	DF = fopen(conf.dumpfile, "w");
+	if (DF == NULL)
+		err(1, "Couldn't open dump file");
+
+	fprintf(DF, "TIME, WLAN TYPE, MAC SRC, SIGNAL ");
 }
 
 
