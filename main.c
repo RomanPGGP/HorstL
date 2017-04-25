@@ -635,6 +635,12 @@ int main(int argc, char** argv)
 	list_head_init(&nodes);
 	init_spectrum();
 
+	for (int i = 0; i < argc; i++)
+	{
+		printf("entr; %s\n");
+		printf("sld: %s\n", argv[i]);	
+	}
+
 	config_parse_file_and_cmdline(argc, argv);
 
 	sigint_action.sa_handler = sigint_handler;
