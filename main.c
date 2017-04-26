@@ -635,11 +635,11 @@ int main(int argc, char** argv)
 	list_head_init(&nodes);
 	init_spectrum();
 
-	for (int i = 0; i < arg; i++)
+	for (int i = 0; i < argc; i++)
 	{
 		printf("argv: %s", argv[i]);	
 	}
-	
+
 	printf(" argc: %d argv0: %s argv1: %s \n", argc, argv[0], argv[1]);
 
 	config_parse_file_and_cmdline(argc, argv);
