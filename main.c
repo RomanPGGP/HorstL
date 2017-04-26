@@ -635,6 +635,8 @@ int main(int argc, char** argv)
 	list_head_init(&nodes);
 	init_spectrum();
 
+	printf(" argc: %d\n", argc);
+
 	config_parse_file_and_cmdline(argc, argv);
 
 	sigint_action.sa_handler = sigint_handler;
