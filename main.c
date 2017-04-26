@@ -635,9 +635,7 @@ int main(int argc, char** argv)
 	list_head_init(&nodes);
 	init_spectrum();
 
-	printf(" argc: %d\n", argc);
-	printf("argv %s\n", argc[0]);
-	printf("argv %s\n", argc[1]);
+	printf(" argc: %d argv0: %s argv1: %s \n", argc, argv[0], argv[1]);
 
 	config_parse_file_and_cmdline(argc, argv);
 
