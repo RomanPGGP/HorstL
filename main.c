@@ -636,6 +636,8 @@ int main(int argc, char** argv)
 	init_spectrum();
 
 	printf(" argc: %d\n", argc);
+	printf("argv %s\n", argc[0]);
+	printf("argv %s\n", argc[1]);
 
 	config_parse_file_and_cmdline(argc, argv);
 
