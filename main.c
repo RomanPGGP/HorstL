@@ -218,10 +218,12 @@ static void write_to_file(struct packet_info* p)
 	//////////////ADD Ro
 	char *lineptr= NULL;
     char *pch;
+    char *chq;
     size_t read;
     size_t len;
     char *mac;
     char *state;
+    int cont = 0;
 	//------------------
 
 
@@ -278,7 +280,6 @@ static void write_to_file(struct packet_info* p)
                         chq = strstr(mac, readmac);
                         if(chq != NULL)
                         {
-                        	fprintf(DF, "FOUND -> %s, %s, ",
 							get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
 							fprintf(DF, " %d \n",p->phy_signal);
 
