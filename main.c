@@ -60,7 +60,7 @@ int mon; /* monitoring socket */
 int dufi;
 
 static FILE* DF = NULL;
-
+static FILE* BLF = NULL;
 /* receive packet buffer
  *
  * due to the way we receive packets the network (TCP connection) we have to
@@ -215,6 +215,15 @@ static void write_to_file(struct packet_info* p)
 	time_t rawtime;
 	time( &rawtime );
 	struct tm* ltm = localtime( &rawtime );
+	//////////////ADD Ro
+	char *lineptr= NULL;
+    char *pch;
+    size_t read;
+    size_t len;
+    char *mac;
+    char *state;
+	//------------------
+
 
 	//timestamp, e.g. 2015-05-16 15:05:44.338806 +0300
 	i = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ltm);
@@ -238,6 +247,47 @@ static void write_to_file(struct packet_info* p)
 	}
 	else
 	{
+		if(BLF != NULL)
+		{
+			char *readmac;
+
+			readmac = ether_sprintf(p->wlan_src);
+
+			while((read=getline(&lineptr,&len,BLF))!= -1) //scanning document
+        	{
+                pch = strstr(lineptr, "blacklisted");
+                if(pch != NULL)
+                        continue;
+                pch = strstr(lineptr, "}");
+                if(pch != NULL)
+                        continue;
+                pch = strtok(lineptr, "['");
+                cont = 0;
+                while(pch != NULL)
+                {
+                        cont++;
+                        if(cont == 1)
+                                mac=pch;
+                        else if(cont == 2)
+                                state=pch;
+                        pch = strtok(NULL, "']=, \n");
+                }
+                chq = strstr(state, "true");
+                if(chq != NULL)
+                {
+                        chq = strstr(mac, readmac);
+                        if(chq != NULL)
+                        {
+                        	fprintf(DF, "FOUND -> %s, %s, ",
+							get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
+							fprintf(DF, " %d \n",p->phy_signal);
+
+                        }
+                }
+        	}
+
+		}
+
 		fprintf(DF, "%s, %s, ",
 			get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
 		fprintf(DF, " %d \n",p->phy_signal);
@@ -634,14 +684,25 @@ int main(int argc, char** argv)
 	list_head_init(&essids.list);
 	list_head_init(&nodes);
 	init_spectrum();
-
-	for (int i = 0; i < argc; i++)
+    ///////////////////ADD Ro
+	if (argv[1] == "-k")
 	{
-		printf("argv: %s", argv[i]);	
+		printf("BLACK LIST BEING ADDED\n");
+
+		if(argc == 4)
+		{
+			if (BLF != NULL) {
+				fclose(BLF);
+				BLF = NULL;
+			}
+
+			BLF = fopen(argv[3], "r");
+			if (BLF == NULL)
+				err(1, "Couldn't open black list");
+
+		}
 	}
-
-	printf(" argc: %d argv0: %s argv1: %s \n", argc, argv[0], argv[1]);
-
+	////////////////////////////////////
 	config_parse_file_and_cmdline(argc, argv);
 
 	sigint_action.sa_handler = sigint_handler;
