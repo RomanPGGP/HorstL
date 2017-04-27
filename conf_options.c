@@ -543,10 +543,6 @@ void config_parse_file_and_cmdline(int argc, char** argv)
 	 * get command line options which are configuration, to let them
 	 * override or add to the config file options
 	 */
-	for (int i = 0; i < argc; i++)
-	{
-		printf("argv: %s", argv[i]);	
-	}
 	optind = 1;
 	while ((c = getopt(argc, argv, getopt_str)) > 0) {
 		config_handle_option(c, NULL, optarg);

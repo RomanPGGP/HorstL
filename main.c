@@ -682,12 +682,13 @@ int main(int argc, char** argv)
 	sigset_t waitmask;
 	struct sigaction sigint_action;
 	struct sigaction sigpipe_action;
-
+	char *st;
 	list_head_init(&essids.list);
 	list_head_init(&nodes);
 	init_spectrum();
     ///////////////////ADD Ro
-	if (argv[1] == "-k")
+    st = strstr(argv[1],"-k")
+	if (st != NULL)
 	{
 		printf("BLACK LIST BEING ADDED\n");
 
