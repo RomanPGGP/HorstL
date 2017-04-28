@@ -254,10 +254,8 @@ static void write_to_file(struct packet_info* p)
 			char *readmac;
 
 			readmac = ether_sprintf(p->wlan_src);
-			printf("QUII %s\n", readmac);
 			while((read=getline(&lineptr,&len,BLF))!= -1) //scanning document
         	{
-        		printf("HIER %s\n", lineptr);
                 pch = strstr(lineptr, "blacklisted");
                 if(pch != NULL)
                         continue;
@@ -278,7 +276,6 @@ static void write_to_file(struct packet_info* p)
                 chq = strstr(state, "true");
                 if(chq != NULL)
                 {
-                		printf("aqnmdpn%s\n");
                         chq = strstr(mac, readmac);
                         if(chq != NULL)
                         {
@@ -289,6 +286,7 @@ static void write_to_file(struct packet_info* p)
                         }
                 }
         	}
+        	lineptr= NULL;
 
 		}
 		/*
