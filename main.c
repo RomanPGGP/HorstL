@@ -687,7 +687,7 @@ int main(int argc, char** argv)
 	list_head_init(&nodes);
 	init_spectrum();
     ///////////////////ADD Ro
-    st = strstr(argv[1],"-k")
+    st = strstr(argv[1],"-k");
 	if (st != NULL)
 	{
 		printf("BLACK LIST BEING ADDED\n");
