@@ -257,6 +257,7 @@ static void write_to_file(struct packet_info* p)
 
 			while((read=getline(&lineptr,&len,BLF))!= -1) //scanning document
         	{
+        		printf("HIER %s\n", lineptr);
                 pch = strstr(lineptr, "blacklisted");
                 if(pch != NULL)
                         continue;
@@ -280,7 +281,7 @@ static void write_to_file(struct packet_info* p)
                         chq = strstr(mac, readmac);
                         if(chq != NULL)
                         {
-                        	fprintf(DF, "%s, %s, ",
+                        	fprintf(DF, "FOUND %s, %s, ",
 							get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
 							fprintf(DF, " %d \n",p->phy_signal);
 
