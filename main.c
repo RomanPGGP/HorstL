@@ -254,7 +254,7 @@ static void write_to_file(struct packet_info* p)
 			char *readmac;
 
 			readmac = ether_sprintf(p->wlan_src);
-
+			printf("QUII %s\n", readmac);
 			while((read=getline(&lineptr,&len,BLF))!= -1) //scanning document
         	{
         		printf("HIER %s\n", lineptr);
@@ -278,6 +278,7 @@ static void write_to_file(struct packet_info* p)
                 chq = strstr(state, "true");
                 if(chq != NULL)
                 {
+                		printf("aqnmdpn%s\n");
                         chq = strstr(mac, readmac);
                         if(chq != NULL)
                         {
@@ -290,10 +291,10 @@ static void write_to_file(struct packet_info* p)
         	}
 
 		}
-
+		/*
 		fprintf(DF, "%s, %s, ",
 			get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
-		fprintf(DF, " %d \n",p->phy_signal);
+		fprintf(DF, " %d \n",p->phy_signal);*/
 	}
 
 	fflush(DF);
