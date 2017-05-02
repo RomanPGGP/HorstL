@@ -232,7 +232,7 @@ static void write_to_file(struct packet_info* p)
 	i += snprintf(buf + i, sizeof(buf) - i, ".%06ld", (long)(the_time.tv_nsec / 1000));
 	i += strftime(buf + i, sizeof(buf) - i, " %z", ltm);
 	
-	
+	fprintf(DF, "SHEGO\n");
 	if(dufi == 0)
 	{
 		fprintf(DF, "%s, ", buf);
