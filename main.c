@@ -278,7 +278,7 @@ static void write_to_file(struct packet_info* p)
                 if(chq != NULL)
                 {
                         chq = strstr(mac, readmac);
-                        if(chq == NULL)
+                        if(chq != NULL)
                         {
                         	fprintf(DF, "%s, ", buf);
                         	fprintf(DF, "----> %s, %s, ",
