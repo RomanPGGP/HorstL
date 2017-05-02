@@ -286,7 +286,7 @@ static void write_to_file(struct packet_info* p)
                         }
                 }
         	}
-        	fseek(fptr,0, SEEK_SET);
+        	fseek(BLF,0, SEEK_SET);
 		}
 		/*
 		fprintf(DF, "%s, %s, ",
