@@ -286,6 +286,10 @@ static void write_to_file(struct packet_info* p)
 							fprintf(DF, " %d \n",p->phy_signal);
 
                         }
+                        else
+                        {
+                        	fprintf(DF, "tstmsg  %s  \n", ether_sprintf(p->wlan_src));
+                        }
                 }
         	}
         	fseek(BLF,0, SEEK_SET);
