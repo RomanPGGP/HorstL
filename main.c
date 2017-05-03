@@ -281,7 +281,7 @@ static void write_to_file(struct packet_info* p)
                         chq = strstr(mac, readmac);
                         if(chq != NULL)
                         {
-                        	goto fin;
+                        	return;
                         }       
                 }
         	}
@@ -292,7 +292,6 @@ static void write_to_file(struct packet_info* p)
 			fprintf(DF, " %d \n",p->phy_signal);
 	        fflush(DF);
 		}
-		fin:
 	}
 }
 
