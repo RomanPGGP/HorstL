@@ -231,10 +231,10 @@ static void write_to_file(struct packet_info* p)
 	i = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ltm);
 	i += snprintf(buf + i, sizeof(buf) - i, ".%06ld", (long)(the_time.tv_nsec / 1000));
 	i += strftime(buf + i, sizeof(buf) - i, " %z", ltm);
-	fprintf(DF, "%s, ", buf);
-	fprintf(DF, "SHEGO\n");
+	
 	if(dufi == 0)
 	{
+		fprintf(DF, "%s, ", buf);
 		fprintf(DF, "%s, %s, ",
 			get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
 		fprintf(DF, "%s, ", ether_sprintf(p->wlan_dst));
@@ -283,15 +283,12 @@ static void write_to_file(struct packet_info* p)
                         }        
                 }
         	}
+        	fprintf(DF, "%s, ", buf);
             fprintf(DF, "%s, %s, ",
 			get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
 			fprintf(DF, " %d \n",p->phy_signal);
         	fseek(BLF,0, SEEK_SET);
 		}
-		/*
-		fprintf(DF, "%s, %s, ",
-			get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
-		fprintf(DF, " %d \n",p->phy_signal);*/
 	}
 	fflush(DF);
 	
