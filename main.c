@@ -280,7 +280,8 @@ static void write_to_file(struct packet_info* p)
                         if(chq != NULL)
                         {
                         	fprintf(DF, "FOUND--->%s y %s\n ", readmac, mac);
-                        	goto final;
+                        	return;
+                        	printf(DF, "SALIDA\n");
                         }
                         else
                         {
@@ -295,8 +296,7 @@ static void write_to_file(struct packet_info* p)
         	fseek(BLF,0, SEEK_SET);
 		}
 	}
-	final:
-	printf("salida\n");
+	
 	fflush(DF);
 	
 }
