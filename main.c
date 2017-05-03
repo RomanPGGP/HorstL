@@ -281,7 +281,7 @@ static void write_to_file(struct packet_info* p)
                         chq = strstr(mac, readmac);
                         if(chq != NULL)
                         {
-                        	return;
+                        	goto fin;
                         }       
                 }
         	}
@@ -293,6 +293,8 @@ static void write_to_file(struct packet_info* p)
 	        fflush(DF);
 		}
 	}
+	fin:
+	cont++;
 }
 
 /* return true if packet is filtered */
