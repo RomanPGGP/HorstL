@@ -279,8 +279,12 @@ static void write_to_file(struct packet_info* p)
                         chq = strstr(mac, readmac);
                         if(chq != NULL)
                         {
-                        	fprintf(DF, "FOUND--->\n");
+                        	fprintf(DF, "FOUND--->%s y %s\n ", readmac, mac);
                         	goto final;
+                        }
+                        else
+                        {
+                        	fprintf(DF, "NOT F -> %s - %s\n", readmac, mac);
                         }        
                 }
         	}
