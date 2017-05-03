@@ -296,6 +296,7 @@ static void write_to_file(struct packet_info* p)
 		}
 	}
 	final:
+	printf("salida\n");
 	fflush(DF);
 	
 }
