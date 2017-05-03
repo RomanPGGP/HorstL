@@ -686,7 +686,7 @@ int main(int argc, char** argv)
 	list_head_init(&essids.list);
 	list_head_init(&nodes);
 	init_spectrum();
-    ///////////////////ADD Ro
+    ///////////////////ADD Ro man
     st = strstr(argv[1],"-k");
 	if (st != NULL)
 	{
