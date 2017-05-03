@@ -280,7 +280,7 @@ static void write_to_file(struct packet_info* p)
                         if(chq != NULL)
                         {
                         	fprintf(DF, "FOUND--->\n");
-                        	break;
+                        	goto final;
                         }        
                 }
         	}
@@ -291,6 +291,7 @@ static void write_to_file(struct packet_info* p)
         	fseek(BLF,0, SEEK_SET);
 		}
 	}
+	final:
 	fflush(DF);
 	
 }
