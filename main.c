@@ -280,7 +280,7 @@ static void write_to_file(struct packet_info* p)
                         if(chq != NULL)
                         {
                         	fprintf(DF, "FOUND--->\n");
-                        	return;
+                        	break;
                         }        
                 }
         	}
