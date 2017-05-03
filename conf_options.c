@@ -546,7 +546,6 @@ void config_parse_file_and_cmdline(int argc, char** argv)
 	optind = 1;
 	while ((c = getopt(argc, argv, getopt_str)) > 0) {
 		config_handle_option(c, NULL, optarg);
-		printf("PR-----%s le numer %d \n", optarg, argc);
 	}
 
 	/*

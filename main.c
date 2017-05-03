@@ -224,7 +224,7 @@ static void write_to_file(struct packet_info* p)
     char *mac;
     char *state;
     int cont = 0;
-    int stts=0;
+    //int stts=0;
 	//------------------
 
 
@@ -280,21 +280,21 @@ static void write_to_file(struct packet_info* p)
                 if(chq != NULL)
                 {
                         chq = strstr(mac, readmac);
-                        if(chq != NULL)
-                        {
-                        	stts=1;
-                        }       
+                        if(chq != NULL) return;
+                        
+                        	//stts=1;
+                               
                 }
         	}
         	fseek(BLF,0, SEEK_SET);
-	        if(stts==0)
-	        {
+	        //if(stts==0)
+	        
 	        	fprintf(DF, "%s, ", buf);
 	        	fprintf(DF, "%s, %s, ",
 					get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
 				fprintf(DF, " %d \n",p->phy_signal);
 	        	fflush(DF);
-	        }
+	        
 		}
 	}
 }
@@ -690,7 +690,6 @@ int main(int argc, char** argv)
     st = strstr(argv[1],"-k");
 	if (st != NULL)
 	{
-		printf("BLACK LIST BEING ADDED\n");
 
 		if(argc == 4)
 		{
