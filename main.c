@@ -283,13 +283,12 @@ static void write_to_file(struct packet_info* p)
                         if(chq != NULL)
                         {
                         	stts=1;
-                        	goto final;
+                    		break;
                         }
                                
                 }
         	}
         	fseek(BLF,0, SEEK_SET);
-        	final:
 	        if(stts==0)
 	        {
 	        	fprintf(DF, "%s, ", buf);
