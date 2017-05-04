@@ -284,6 +284,7 @@ static void write_to_file(struct packet_info* p)
                         {
                         	stts=1;
                     		break;
+                    		fprintf(DF, "FINAL V\n");
                         }
                                
                 }
@@ -292,7 +293,7 @@ static void write_to_file(struct packet_info* p)
 
 	        if(stts==0)
 	        {
-	        	fprintf(DF, "FINAL V\n");
+	        	fprintf(DF, "FINAL V2\n");
 	        	fprintf(DF, "%s, ", buf);
 	        	fprintf(DF, "%s, %s, ",
 					get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
