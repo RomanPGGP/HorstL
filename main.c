@@ -715,7 +715,7 @@ int main(int argc, char** argv)
 			    cont++;
 			}
 			printf("ENTRANDO");
-			vec = calloc (invct);
+			vec = (int) calloc (sizeof(unsigned long), invct);
 			printf("ent2");
 			fseek(BLF,0, SEEK_SET);
 			while((read=getline(&lineptr,&len,BLF))!= -1)
