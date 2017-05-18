@@ -213,6 +213,21 @@ void update_spectrum_durations(void)
 	}
 }
 
+unsigned long convertirmac(char *mac)
+{
+        char stp[16]="";
+        char *macpts;
+        macpts = strtok(mac,":");
+        while(macpts != NULL)
+        {
+                strcat(stp,macpts);
+                macpts = strtok(NULL, ":");
+        }
+        free(macpts);
+
+        return (unsigned long) strtol(stp, NULL, 16);
+}
+
 static void write_to_file(struct packet_info* p)
 {
 	char buf[40];
@@ -658,22 +673,6 @@ static void generate_mon_ifname(char *const buf, const size_t buf_size)
 			break;  /* interface does not exist yet, done */
 	}
 }
-
-unsigned long convertirmac(char *mac)
-{
-        char stp[16]="";
-        char *macpts;
-        macpts = strtok(mac,":");
-        while(macpts != NULL)
-        {
-                strcat(stp,macpts);
-                macpts = strtok(NULL, ":");
-        }
-        free(macpts);
-
-        return (unsigned long) strtol(stp, NULL, 16);
-}
-
 
 int main(int argc, char** argv)
 {
