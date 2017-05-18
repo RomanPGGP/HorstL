@@ -714,7 +714,7 @@ int main(int argc, char** argv)
 			    if(pch != NULL)continue;
 			    cont++;
 			}
-			vec = malloc(sizeof(unsigned long)*invct);
+			vec = calloc (invict, sizeof(unsigned long));
 
 			fseek(BLF,0, SEEK_SET);
 			while((read=getline(&lineptr,&len,BLF))!= -1)
