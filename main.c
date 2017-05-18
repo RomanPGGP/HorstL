@@ -59,6 +59,11 @@ struct timespec the_time;
 int mon; /* monitoring socket */
 int dufi;
 
+unsigned long *vec; //Ro
+int invct = 0; //Ro
+int temp[20]={0};
+int contemp;
+
 static FILE* DF = NULL;
 static FILE* BLF = NULL;
 /* receive packet buffer
@@ -216,15 +221,7 @@ static void write_to_file(struct packet_info* p)
 	time( &rawtime );
 	struct tm* ltm = localtime( &rawtime );
 	//////////////ADD Ro
-	char *lineptr= NULL;
-    char *pch;
-    char *chq;
-    size_t read;
-    size_t len;
-    char *mac;
-    char *state;
-    int cont = 0;
-    int stts=0;
+	int sts = 0;
 	//------------------
 
 
@@ -252,53 +249,36 @@ static void write_to_file(struct packet_info* p)
 	}
 	else
 	{
-		if(BLF != NULL)
-		{
-			char *readmac;
+		int ret = convertirmac(ether_sprintf(p->wlan_src));
+		if(contemp >= 20)
+        {
+                contemp=0;
+        }
 
-			readmac = ether_sprintf(p->wlan_src);
-			while((read=getline(&lineptr,&len,BLF))!= -1) //scanning document
-        	{
-                pch = strstr(lineptr, "blacklisted");
-                if(pch != NULL)
-                        continue;
-                pch = strstr(lineptr, "}");
-                if(pch != NULL)
-                        continue;
-                pch = strtok(lineptr, "['");
-                cont = 0;
-                while(pch != NULL)
-                {
-                        cont++;
-                        if(cont == 1)
-                                mac=pch;
-                        else if(cont == 2)
-                                state=pch;
-                        pch = strtok(NULL, "']=, \n");
-                }
-                chq = strstr(state, "true");
-                if(chq != NULL)
-                {
-                        chq = strstr(mac, readmac);
-                        if(chq != NULL)
-                        {
-                        	stts=1;
-                    		break;
-                        }
-                               
-                }
-        	}
-        	fseek(BLF,0, SEEK_SET);
+        for(int i=0; i<20; i++)
+        {
+                if(ret == temp[i]) sts = 1;
+        }
 
-	        if(stts==0)
-	        {
-	        	fprintf(DF, "%s, ", buf);
-	        	fprintf(DF, "%s, %s, ",
-					get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
-				fprintf(DF, " %d \n",p->phy_signal);
-	        	fflush(DF);
-	        }
-		}
+        if(sts == 0)
+        {
+                temp[contemp] = ret;
+
+                for(int i=0; i<invct; i++)
+                {
+                        if(ret == vec[i]) sts = 1;
+                }
+        }
+
+	    if(sts == 0)
+	    {
+	        fprintf(DF, "%s, ", buf);
+	        fprintf(DF, "%s, %s, ",
+				get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
+			fprintf(DF, " %d \n",p->phy_signal);
+	        fflush(DF);
+	    }
+		
 	}
 }
 
@@ -679,6 +659,22 @@ static void generate_mon_ifname(char *const buf, const size_t buf_size)
 	}
 }
 
+unsigned long convertirmac(char *mac)
+{
+        char stp[16]="";
+        char *macpts;
+        macpts = strtok(mac,":");
+        while(macpts != NULL)
+        {
+                strcat(stp,macpts);
+                macpts = strtok(NULL, ":");
+        }
+        free(macpts);
+
+        return (unsigned long) strtol(stp, NULL, 16);
+}
+
+
 int main(int argc, char** argv)
 {
 	sigset_t workmask;
@@ -690,10 +686,16 @@ int main(int argc, char** argv)
 	list_head_init(&nodes);
 	init_spectrum();
     ///////////////////ADD Ro man
+    char *lineptr= NULL;
+    size_t read;
+    size_t len;
+    char *pch;
+    int cont = 0;
+    char *mac;
+    char *state;
     st = strstr(argv[1],"-k");
 	if (st != NULL)
 	{
-
 		if(argc == 4)
 		{
 			if (BLF != NULL) {
@@ -705,6 +707,39 @@ int main(int argc, char** argv)
 			if (BLF == NULL)
 				err(1, "Couldn't open black list");
 
+			while((read=getline(&lineptr,&len,BLF))!= -1)
+			{
+			    pch = strstr(lineptr, "blacklisted");
+			    if(pch != NULL)continue;
+			    pch = strstr(lineptr, "}");
+			    if(pch != NULL)continue;
+			    cont++;
+			}
+			vec = malloc(sizeof(unsigned long)*invct);
+
+			fseek(BLF,0, SEEK_SET);
+			while((read=getline(&lineptr,&len,BLF))!= -1)
+        	{
+                pch = strstr(lineptr, "blacklisted");
+                if(pch != NULL) continue;
+                pch = strstr(lineptr, "}");
+                if(pch != NULL) continue;
+                pch = strtok(lineptr, "['");
+                cont = 0;
+                while(pch != NULL)
+                {
+                        cont++;
+                        if(cont ==1) mac=pch;
+                        else if(cont == 2) state=pch;
+                        pch = strtok(NULL, "']=, \n");
+                }
+                pch = strstr(state, "true");
+                if(pch != NULL)
+                {
+                        vec[invct]=convertirmac(mac);
+                        invct++;
+                }
+        	}
 		}
 	}
 	////////////////////////////////////
@@ -824,6 +859,7 @@ int main(int argc, char** argv)
 			}
 		}
 	}
+	fclose(BLF);
 	return 0;
 }
 
