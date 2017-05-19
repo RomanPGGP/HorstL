@@ -60,7 +60,7 @@ int mon; /* monitoring socket */
 int dufi;
 int invct = 0;
 long temp[20]={0};
-int contemp;
+int contemp=0;
 long* vec;
 
 static FILE* DF = NULL;
@@ -701,6 +701,7 @@ int main(int argc, char** argv)
 	{
 		if(argc == 4)
 		{
+			printf("ENTRANDO\n");
 			if (BLF != NULL) {
 				fclose(BLF);
 				BLF = NULL;
@@ -744,6 +745,7 @@ int main(int argc, char** argv)
                 }
         	}
 		}
+		printf("SALIENDO\n");
 	}
 	//-----------------------------------------
 
