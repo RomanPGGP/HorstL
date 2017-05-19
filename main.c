@@ -225,7 +225,7 @@ double convertirmac(char *mac)
         }
         free(macpts);
         double res = (double) strtol(stp, NULL, 16);
-        res /= 10000000;
+        res /= 100000000;
         return res;
 }
 
@@ -262,7 +262,7 @@ static void write_to_file(struct packet_info* p)
 	else
 	{
 		double ret = convertirmac(ether_sprintf(p->wlan_src));
-		printf("MAC -> %s rt-> %ld\n", ether_sprintf(p->wlan_src), ret);
+		printf("MAC -> %s rt-> %f\n", ether_sprintf(p->wlan_src), ret);
 
 		if(contemp >= 20)
         {
