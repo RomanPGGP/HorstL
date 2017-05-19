@@ -863,7 +863,7 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	fclose(fptr);
+	fclose(BLF);
 	return 0;
 }
 
