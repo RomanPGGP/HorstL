@@ -695,6 +695,7 @@ int main(int argc, char** argv)
     int cont = 0;
     char *mac;
     char *state;
+    char *st;
     st = strstr(argv[1],"-k");
     if (st != NULL)
 	{
