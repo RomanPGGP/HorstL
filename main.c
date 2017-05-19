@@ -281,7 +281,8 @@ static void write_to_file(struct packet_info* p)
                 {
                         if(reth == temp[i])
                         {
-                        		printf("IF RECIENTES");
+                        		printf("IF RECIENTES ");
+                        		printf("MAC -> %s\n", ether_sprintf(p->wlan_src));
                                 sts = 1;
                                 break;
                         }
@@ -296,13 +297,14 @@ static void write_to_file(struct packet_info* p)
                         {
                                 if(reth == vec[i])
                                 {
-                                	printf("IF VECTOR COMPLETO\n");
-                                        sts = 1;
-                                        temp[contemp] = reth;
-                                        contemp++;
-                                        temp[contemp] = retl;
-                                        contemp++;
-                                        break;
+                                	printf("IF VECTOR COMPLETO ");
+                                	printf("MAC -> %s\n", ether_sprintf(p->wlan_src));
+                                    sts = 1;
+                                    temp[contemp] = reth;
+                                    contemp++;
+                                    temp[contemp] = retl;
+                                    contemp++;
+                                    break;
                                 }
                         }
                 }
