@@ -260,8 +260,8 @@ static void write_to_file(struct packet_info* p)
 	}
 	else
 	{
-		printf("ENT--->\n");
 		long ret = convertirmac(ether_sprintf(p->wlan_src));
+		printf("MAC -> %s rt-> %ld\n", ether_sprintf(p->wlan_src), ret);
 
 		if(contemp >= 20)
         {
