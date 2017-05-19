@@ -59,7 +59,7 @@ struct timespec the_time;
 int mon; /* monitoring socket */
 int dufi;
 int invct = 0;
-int temp[40]={0};
+int temp[6]={0};
 int contemp=0;
 int* vec;
 
@@ -270,12 +270,12 @@ static void write_to_file(struct packet_info* p)
 		int reth, retl;
 		convertirmac(ether_sprintf(p->wlan_src),&reth,&retl);
 
-		if(contemp >= 40)
+		if(contemp >= 6)
         {
                 contemp=0;
         }
 
-        for(int i=0; i<40; i+=2)
+        for(int i=0; i<6; i+=2)
         {
                 if(retl == temp[i+1])
                 {
