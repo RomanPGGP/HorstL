@@ -281,6 +281,7 @@ static void write_to_file(struct packet_info* p)
                 {
                         if(reth == temp[i])
                         {
+                        		printf("IF RECIENTES");
                                 sts = 1;
                                 break;
                         }
@@ -295,6 +296,7 @@ static void write_to_file(struct packet_info* p)
                         {
                                 if(reth == vec[i])
                                 {
+                                	printf("IF VECTOR COMPLETO\n");
                                         sts = 1;
                                         temp[contemp] = reth;
                                         contemp++;
