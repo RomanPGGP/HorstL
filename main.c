@@ -59,9 +59,9 @@ struct timespec the_time;
 int mon; /* monitoring socket */
 int dufi;
 int invct = 0;
-double temp[20]={0};
+int temp[40]={0};
 int contemp=0;
-double* vec;
+int* vec;
 
 static FILE* DF = NULL;
 static FILE* BLF = NULL;
@@ -213,20 +213,26 @@ void update_spectrum_durations(void)
 	}
 }
 
-double convertirmac(char *mac)
+void convertirmac(char *mac, int *mach, int *macl)
 {
-        char stp[16]="";
+        char stph[6]="";
+        char stpl[6]="";
         char *macpts;
         macpts = strtok(mac,":");
+        int co=0;
         while(macpts != NULL)
         {
-                strcat(stp,macpts);
+                if(co < 3) strcat(stph,macpts);
+
+                if(co == 3) *mach = (int) strtol(stph, NULL, 16);
+
+                if(co >= 3) strcat(stpl,macpts);
+
                 macpts = strtok(NULL, ":");
+                co++;
         }
-        free(macpts);
-        double res = (double) strtol(stp, NULL, 16);
-        res /= 100000000;
-        return res;
+        *macl = (int) strtol(stpl, NULL, 16);
+        return;
 }
 
 static void write_to_file(struct packet_info* p)
@@ -261,31 +267,41 @@ static void write_to_file(struct packet_info* p)
 	}
 	else
 	{
-		double ret = convertirmac(ether_sprintf(p->wlan_src));
-		printf("MAC -> %s rt-> %f\n", ether_sprintf(p->wlan_src), ret);
+		int reth, retl;
+		convertirmac(ether_sprintf(p->wlan_src),&reth,&retl);
 
-		if(contemp >= 20)
+		if(contemp >= 40)
         {
                 contemp=0;
         }
 
-        for(int i=0; i<20; i++)
+        for(int i=0; i<40; i+=2)
         {
-                if(ret == temp[i]) {
-                	sts = 1;
-                	break;
+                if(retl == temp[i+1])
+                {
+                        if(reth == temp[i])
+                        {
+                                sts = 1;
+                                break;
+                        }
                 }
         }
 
         if(sts == 0)
         {
-                temp[contemp] = ret;
-                contemp++;
-                for(int i=0; i<invct; i++)
+                for(int i=0; i<invct; i+=2)
                 {
-                        if(ret == vec[i]) {
-                        	sts = 1;
-                        	break;
+                        if(retl == vec[i+1])
+                        {
+                                if(reth == vec[i])
+                                {
+                                        sts = 1;
+                                        temp[contemp] = reth;
+                                        contemp++;
+                                        temp[contemp] = retl;
+                                        contemp++;
+                                        break;
+                                }
                         }
                 }
         }
@@ -721,8 +737,8 @@ int main(int argc, char** argv)
 			    if(pch != NULL)continue;
 			    cont++;
 			}
-
-			vec = (double*) calloc(cont, sizeof(double));
+			cont*=2;
+			vec = (int*) calloc(cont, sizeof(int));
 			fseek(BLF,0, SEEK_SET);
 			while((read=getline(&lineptr,&len,BLF))!= -1)
         	{
@@ -742,7 +758,11 @@ int main(int argc, char** argv)
                 pch = strstr(state, "true");
                 if(pch != NULL)
                 {
-                        vec[invct]=convertirmac(mac);
+                        int mch, mcl;
+                        convertirmac(mac,&mch,&mcl);
+                        vec[invct]=mch;
+                        invct++;
+                        vec[invct]=mcl;
                         invct++;
                 }
         	}
