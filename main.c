@@ -58,14 +58,14 @@ struct timespec the_time;
 
 int mon; /* monitoring socket */
 int dufi;
-
-unsigned long *vec; //Ro
-int invct = 0; //Ro
-int temp[20]={0};
+int invct = 0;
+long temp[20]={0};
 int contemp;
+long* vec;
 
 static FILE* DF = NULL;
 static FILE* BLF = NULL;
+
 /* receive packet buffer
  *
  * due to the way we receive packets the network (TCP connection) we have to
@@ -213,7 +213,7 @@ void update_spectrum_durations(void)
 	}
 }
 
-unsigned long convertirmac(char *mac)
+long convertirmac(char *mac)
 {
         char stp[16]="";
         char *macpts;
@@ -225,7 +225,7 @@ unsigned long convertirmac(char *mac)
         }
         free(macpts);
 
-        return (unsigned long) strtol(stp, NULL, 16);
+        return (long) strtol(stp, NULL, 16);
 }
 
 static void write_to_file(struct packet_info* p)
@@ -235,15 +235,12 @@ static void write_to_file(struct packet_info* p)
 	time_t rawtime;
 	time( &rawtime );
 	struct tm* ltm = localtime( &rawtime );
-	//////////////ADD Ro
 	int sts = 0;
-	//------------------
-
-
 	//timestamp, e.g. 2015-05-16 15:05:44.338806 +0300
 	i = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ltm);
 	i += snprintf(buf + i, sizeof(buf) - i, ".%06ld", (long)(the_time.tv_nsec / 1000));
 	i += strftime(buf + i, sizeof(buf) - i, " %z", ltm);
+	
 	
 	if(dufi == 0)
 	{
@@ -259,12 +256,12 @@ static void write_to_file(struct packet_info* p)
 			p->wlan_essid, p->wlan_mode, p->wlan_channel,
 			p->wlan_wep, p->wlan_wpa, p->wlan_rsn);
 		fprintf(DF, "%s, %s\n", ip_sprintf(p->ip_src), ip_sprintf(p->ip_dst));
-
 		fflush(DF);
 	}
 	else
 	{
-		int ret = convertirmac(ether_sprintf(p->wlan_src));
+		long ret = convertirmac(ether_sprintf(p->wlan_src));
+
 		if(contemp >= 20)
         {
                 contemp=0;
@@ -272,28 +269,33 @@ static void write_to_file(struct packet_info* p)
 
         for(int i=0; i<20; i++)
         {
-                if(ret == temp[i]) sts = 1;
+                if(ret == temp[i]) {
+                	sts = 1;
+                	break;
+                }
         }
 
         if(sts == 0)
         {
                 temp[contemp] = ret;
-
+                contemp++;
                 for(int i=0; i<invct; i++)
                 {
-                        if(ret == vec[i]) sts = 1;
+                        if(ret == vec[i]) {
+                        	sts = 1;
+                        	break;
+                        }
                 }
         }
 
-	    if(sts == 0)
+        if(sts == 0)
 	    {
-	        fprintf(DF, "%s, ", buf);
-	        fprintf(DF, "%s, %s, ",
+	    	fprintf(DF, "%s, ", buf);
+			fprintf(DF, "%s, %s, ",
 				get_packet_type_name(p->wlan_type), ether_sprintf(p->wlan_src));
 			fprintf(DF, " %d \n",p->phy_signal);
-	        fflush(DF);
-	    }
-		
+			fflush(DF);
+		}
 	}
 }
 
@@ -680,12 +682,13 @@ int main(int argc, char** argv)
 	sigset_t waitmask;
 	struct sigaction sigint_action;
 	struct sigaction sigpipe_action;
-	char *st;
+
 	list_head_init(&essids.list);
 	list_head_init(&nodes);
 	init_spectrum();
-    ///////////////////ADD Ro man
-    char *lineptr= NULL;
+
+	//////-------------------------------- add
+	char *lineptr= NULL;
     size_t read;
     size_t len;
     char *pch;
@@ -693,7 +696,7 @@ int main(int argc, char** argv)
     char *mac;
     char *state;
     st = strstr(argv[1],"-k");
-	if (st != NULL)
+    if (st != NULL)
 	{
 		if(argc == 4)
 		{
@@ -714,9 +717,8 @@ int main(int argc, char** argv)
 			    if(pch != NULL)continue;
 			    cont++;
 			}
-			printf("ENTRANDO");
-			vec = (int) calloc (sizeof(unsigned long), invct);
-			printf("ent2");
+
+			vec = (long*) calloc(cont, sizeof(long));
 			fseek(BLF,0, SEEK_SET);
 			while((read=getline(&lineptr,&len,BLF))!= -1)
         	{
@@ -742,7 +744,8 @@ int main(int argc, char** argv)
         	}
 		}
 	}
-	////////////////////////////////////
+	//-----------------------------------------
+
 	config_parse_file_and_cmdline(argc, argv);
 
 	sigint_action.sa_handler = sigint_handler;
@@ -859,7 +862,8 @@ int main(int argc, char** argv)
 			}
 		}
 	}
-	fclose(BLF);
+	
+	fclose(fptr);
 	return 0;
 }
 
