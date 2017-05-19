@@ -59,7 +59,7 @@ struct timespec the_time;
 int mon; /* monitoring socket */
 int dufi;
 int invct = 0;
-int temp[6]={0};
+int temp[40]={0};
 int contemp=0;
 int* vec;
 
@@ -270,19 +270,17 @@ static void write_to_file(struct packet_info* p)
 		int reth, retl;
 		convertirmac(ether_sprintf(p->wlan_src),&reth,&retl);
 
-		if(contemp >= 6)
+		if(contemp >= 40)
         {
                 contemp=0;
         }
 
-        for(int i=0; i<6; i+=2)
+        for(int i=0; i<40; i+=2)
         {
                 if(retl == temp[i+1])
                 {
                         if(reth == temp[i])
                         {
-                        		printf("IF RECIENTES ");
-                        		printf("MAC -> %s\n", ether_sprintf(p->wlan_src));
                                 sts = 1;
                                 break;
                         }
@@ -297,8 +295,6 @@ static void write_to_file(struct packet_info* p)
                         {
                                 if(reth == vec[i])
                                 {
-                                	printf("IF VECTOR COMPLETO ");
-                                	printf("MAC -> %s\n", ether_sprintf(p->wlan_src));
                                     sts = 1;
                                     temp[contemp] = reth;
                                     contemp++;
@@ -723,7 +719,6 @@ int main(int argc, char** argv)
 	{
 		if(argc == 4)
 		{
-			printf("ENTRANDO\n");
 			if (BLF != NULL) {
 				fclose(BLF);
 				BLF = NULL;
@@ -771,7 +766,6 @@ int main(int argc, char** argv)
                 }
         	}
 		}
-		printf("SALIENDO\n");
 	}
 	//-----------------------------------------
 
