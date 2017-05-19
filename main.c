@@ -59,9 +59,9 @@ struct timespec the_time;
 int mon; /* monitoring socket */
 int dufi;
 int invct = 0;
-unsigned int temp[20]={0};
+double temp[20]={0};
 int contemp=0;
-unsigned int* vec;
+double* vec;
 
 static FILE* DF = NULL;
 static FILE* BLF = NULL;
@@ -213,7 +213,7 @@ void update_spectrum_durations(void)
 	}
 }
 
-unsigned int convertirmac(char *mac)
+double convertirmac(char *mac)
 {
         char stp[16]="";
         char *macpts;
@@ -224,7 +224,9 @@ unsigned int convertirmac(char *mac)
                 macpts = strtok(NULL, ":");
         }
         free(macpts);
-        return (unsigned int) strtol(stp, NULL, 16);
+        double res = (double) strtol(stp, NULL, 16);
+        res /= 10000000;
+        return res;
 }
 
 static void write_to_file(struct packet_info* p)
@@ -259,7 +261,7 @@ static void write_to_file(struct packet_info* p)
 	}
 	else
 	{
-		unsigned int ret = convertirmac(ether_sprintf(p->wlan_src));
+		double ret = convertirmac(ether_sprintf(p->wlan_src));
 		printf("MAC -> %s rt-> %ld\n", ether_sprintf(p->wlan_src), ret);
 
 		if(contemp >= 20)
@@ -720,7 +722,7 @@ int main(int argc, char** argv)
 			    cont++;
 			}
 
-			vec = (long*) calloc(cont, sizeof(long));
+			vec = (double*) calloc(cont, sizeof(double));
 			fseek(BLF,0, SEEK_SET);
 			while((read=getline(&lineptr,&len,BLF))!= -1)
         	{
