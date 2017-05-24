@@ -57,14 +57,17 @@ struct config conf;
 struct timespec the_time;
 
 int mon; /* monitoring socket */
-int dufi;
-int invct = 0;
-int temp[40]={0};
-int contemp=0;
-int* vec;
+
+//Roman variables globales para manejar las MAC's en el blacklist ----------
+int dufi;	//Identificar el archivo. 0 es el archivo completo del comando "horst -o -archivo-". 1 es para el archivo reducido "horst -k -archivo-"
+int invct = 0;  //Indice de las MAC's en el vector 'vec' que guarda las MAC convertidas a Int.
+int temp[40]={0}; // Vector donde se guardan las MAC encontradas mas recientes.
+int contemp=0; //Indice del vector anterior.
+int* vec; //Arreglo donde se guardan las MAC's convertidas a int.
+//---------------------------------------------------------------------------
 
 static FILE* DF = NULL;
-static FILE* BLF = NULL;
+static FILE* BLF = NULL;  //Roman Archivo blacklist
 
 /* receive packet buffer
  *
@@ -213,27 +216,35 @@ void update_spectrum_durations(void)
 	}
 }
 
+/*
+Roman --------------------------------------------------
+Función donde se convierten las MAC en int. Regresa la MAC en los parametros por referencia:
+mach -> MAC High : Guarda los primeros tres octetos convertidos en int.
+macl -> MAC Low : Guarda los últimos tres octetos convertidos en int. A estos se les da mayor prioridad
+cuando se hacen las comparaciones para la busqueda.
+*/
 void convertirmac(char *mac, int *mach, int *macl)
 {
-        char stph[6]="";
-        char stpl[6]="";
+        char stph[6]=""; //Guarda los primeros 6 caracteres de la mac para después convertirlos.
+        char stpl[6]=""; //Guarda los ultimos 6 caracteres de la mac.
         char *macpts;
-        macpts = strtok(mac,":");
+        macpts = strtok(mac,":"); //Guarda un substring dividido por ':'
         int co=0;
         while(macpts != NULL)
         {
-                if(co < 3) strcat(stph,macpts);
+                if(co < 3) strcat(stph,macpts); //Concatena los caracteres de dos en dos hasta tener los primeros 6.
 
-                if(co == 3) *mach = (int) strtol(stph, NULL, 16);
-
-                if(co >= 3) strcat(stpl,macpts);
+                if(co == 3) *mach = (int) strtol(stph, NULL, 16); //Cuando se han concatenado los primeros 6 caracteres 
+                												  //hace la conversion de hex (string) a int.
+                if(co >= 3) strcat(stpl,macpts); //Concatena los ultimos 6 caracteres.
 
                 macpts = strtok(NULL, ":");
                 co++;
         }
-        *macl = (int) strtol(stpl, NULL, 16);
+        *macl = (int) strtol(stpl, NULL, 16); //Convierte de hex(string) a int los ultimos 6 caracteres.
         return;
 }
+//----------------------------------------------------------
 
 static void write_to_file(struct packet_info* p)
 {
@@ -242,14 +253,16 @@ static void write_to_file(struct packet_info* p)
 	time_t rawtime;
 	time( &rawtime );
 	struct tm* ltm = localtime( &rawtime );
-	int sts = 0;
+
+	int sts = 0; //Roman Status para decidir si se escribe en el archivo de salida.
+	
 	//timestamp, e.g. 2015-05-16 15:05:44.338806 +0300
 	i = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ltm);
 	i += snprintf(buf + i, sizeof(buf) - i, ".%06ld", (long)(the_time.tv_nsec / 1000));
 	i += strftime(buf + i, sizeof(buf) - i, " %z", ltm);
 	
 	
-	if(dufi == 0)
+	if(dufi == 0) //Roman Escribe el archivo completo. horst -o -archivo-
 	{
 		fprintf(DF, "%s, ", buf);
 		fprintf(DF, "%s, %s, ",
@@ -265,48 +278,45 @@ static void write_to_file(struct packet_info* p)
 		fprintf(DF, "%s, %s\n", ip_sprintf(p->ip_src), ip_sprintf(p->ip_dst));
 		fflush(DF);
 	}
-	else
+	else // Roman Escribe el archivo con la opción agregada '-k'. 'horst -k -archivo-'
 	{
-		int reth, retl;
+		int reth, retl; //Roman Toma la MAC del paquete a verificar. Ret High y Low.
 		convertirmac(ether_sprintf(p->wlan_src),&reth,&retl);
 
-		if(contemp >= 40)
-        {
-                contemp=0;
-        }
+		if(contemp >= 40) contemp=0; //Roman Condición para control del arreglo temporal. Hacer el arreglo FIFO.
 
-        for(int i=0; i<40; i+=2)
+        for(int i=0; i<40; i+=2) //Roman Ciclo de busqueda en el arreglo de los más recientes.
         {
-                if(retl == temp[i+1])
-                {
-                        if(reth == temp[i])
+                if(retl == temp[i+1]) //Roman Si la parte low de ambas partes coinciden, 
+                {					  //procede a una segunda validación.
+                        if(reth == temp[i]) //Roman Si las partes High tambien coinciden
                         {
-                                sts = 1;
-                                break;
+                                sts = 1; //Roman Se cambia status a 1 (encontrado)
+                                break; //Break para salir del ciclo.
                         }
                 }
         }
 
-        if(sts == 0)
+        if(sts == 0) //Roman Si no se encontró en la primera busqueda pasa a una segunda busqueda.
         {
-                for(int i=0; i<invct; i+=2)
-                {
-                        if(retl == vec[i+1])
+                for(int i=0; i<invct; i+=2) //Roman Ciclo de la segunda busqueda. Busqueda completa 
+                {                           //por todas las direcciones registradas en el archivo.
+                        if(retl == vec[i+1])//Roman Checa las partes Low de las MAC
                         {
-                                if(reth == vec[i])
+                                if(reth == vec[i]) //Roman Checa las partes High
                                 {
-                                    sts = 1;
-                                    temp[contemp] = reth;
+                                    sts = 1; //Roman Si coinciden el status cambia a 1 (encontrado).
+                                    temp[contemp] = reth;//Roman Se guarda la parte High de la MAC en los indices pares, comenzando por 0.
                                     contemp++;
-                                    temp[contemp] = retl;
+                                    temp[contemp] = retl;//Roman Se guarda la parte Low de la MAC en los indices nones.
                                     contemp++;
-                                    break;
+                                    break; //Roman Break para salir del ciclo en cuanto se encuentre.
                                 }
                         }
                 }
         }
 
-        if(sts == 0)
+        if(sts == 0)//Roman Si no se encontro la dirección, se escribe la información del paquete.
 	    {
 	    	fprintf(DF, "%s, ", buf);
 			fprintf(DF, "%s, %s, ",
@@ -705,7 +715,7 @@ int main(int argc, char** argv)
 	list_head_init(&nodes);
 	init_spectrum();
 
-	//////-------------------------------- add
+	//////----Roman Agregado del archivo (1 sola vez). Lectura y conversión de MAC's
 	char *lineptr= NULL;
     size_t read;
     size_t len;
@@ -715,9 +725,9 @@ int main(int argc, char** argv)
     char *state;
     char *st;
     st = strstr(argv[1],"-k");
-    if (st != NULL)
+    if (st != NULL) //Roman Si el argumento es '-k'
 	{
-		if(argc == 4)
+		if(argc == 4) //Roman Si hay cuatro argumentos, está el path del blacklist. Se debe incluir para funcionar.
 		{
 			if (BLF != NULL) {
 				fclose(BLF);
@@ -728,33 +738,34 @@ int main(int argc, char** argv)
 			if (BLF == NULL)
 				err(1, "Couldn't open black list");
 
-			while((read=getline(&lineptr,&len,BLF))!= -1)
+			while((read=getline(&lineptr,&len,BLF))!= -1) //Roman Hace un conteo de las MAC's para tener el espacio que necesita el arreglo.
 			{
-			    pch = strstr(lineptr, "blacklisted");
+			    pch = strstr(lineptr, "blacklisted"); //Roman Se elimina la linea del "blacklisted"
 			    if(pch != NULL)continue;
-			    pch = strstr(lineptr, "}");
+			    pch = strstr(lineptr, "}"); //Roman Se elimina la linea final con '}'
 			    if(pch != NULL)continue;
 			    cont++;
 			}
 			cont*=2;
-			vec = (int*) calloc(cont, sizeof(int));
+			vec = (int*) calloc(cont, sizeof(int)); //Roman Se inicializa el vector que guardará las MAC's del archivo convertidas en int.
 			fseek(BLF,0, SEEK_SET);
+			
 			while((read=getline(&lineptr,&len,BLF))!= -1)
         	{
-                pch = strstr(lineptr, "blacklisted");
+                pch = strstr(lineptr, "blacklisted"); //Roman Se elimina la primera linea 
                 if(pch != NULL) continue;
-                pch = strstr(lineptr, "}");
+                pch = strstr(lineptr, "}"); //Roman Se elimina la line final
                 if(pch != NULL) continue;
-                pch = strtok(lineptr, "['");
+                pch = strtok(lineptr, "['"); //Roman Se eliminan ciertos carateres al principio de la MAC.
                 cont = 0;
                 while(pch != NULL)
                 {
                         cont++;
-                        if(cont ==1) mac=pch;
-                        else if(cont == 2) state=pch;
-                        pch = strtok(NULL, "']=, \n");
+                        if(cont ==1) mac=pch; //Se obtiene la MAC en formato xx:xx:xx:xx:xx:xx
+                        else if(cont == 2) state=pch; //Se obtiene el state que viene después de la MAC. ['MAC'] = state
+                        pch = strtok(NULL, "']=, \n"); //Elimina caracteres indeseados hasta que acabar el string.
                 }
-                pch = strstr(state, "true");
+                pch = strstr(state, "true"); //Si el state es true se agrega la MAC.
                 if(pch != NULL)
                 {
                         int mch, mcl;
@@ -767,7 +778,7 @@ int main(int argc, char** argv)
         	}
 		}
 	}
-	//-----------------------------------------
+	//------------------------------------------------------------
 
 	config_parse_file_and_cmdline(argc, argv);
 
