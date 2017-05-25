@@ -521,8 +521,7 @@ void exit_handler_quit(void)
 void handle_user_input(void)
 {
 	int key;
-	//key = getch();
-	scanf("%c",&key);
+	key = getch();
 
 	
 	switch(key) {
@@ -576,8 +575,7 @@ static void receive_any(const sigset_t *const waitmask)
 		err(1, "select()");
 
 	/* stdin */
-	/*if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)*/
-		printf("nmms ---------------\n");
+	if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)
 		handle_user_input();
 
 	/* local packet or client */
