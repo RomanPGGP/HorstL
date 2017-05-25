@@ -514,14 +514,14 @@ void exit_handler_quit(void)
 	if (!conf.debug)
 		net_finish();
 
-	printf("sal\n");
+	printf("sassasas\n");
 	ifctrl_finish();
 }
 
 void handle_user_input(void)
 {
 	char key;
-	key = getch();
+	key = getchar();
 
 	
 	switch(key) {
