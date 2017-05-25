@@ -520,8 +520,9 @@ void exit_handler_quit(void)
 
 void handle_user_input(void)
 {
-	char key;
-	key = getche();
+	int key;
+	//key = getch();
+	scanf("%c",&key);
 
 	
 	switch(key) {
