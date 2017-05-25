@@ -524,6 +524,7 @@ void handle_user_input(void)
 
 	printf("POQ\n");
 
+	key = 'q';
 	switch(key) {
 		case ' ': case 'p': case 'P':
 			main_pause(conf.paused = conf.paused ? 0 : 1);
