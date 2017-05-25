@@ -489,6 +489,54 @@ static void local_receive_packet(int fd, unsigned char* buffer, size_t bufsize)
 	handle_packet(&p);
 }
 
+void exit_handler_quit(void)
+{
+	free_lists();
+
+	ifctrl_flags(conf.ifname, false, false);
+
+	if (conf.monitor_added)
+		ifctrl_iwdel(conf.ifname);
+
+	if (DF != NULL) {
+		fclose(DF);
+		DF = NULL;
+	}
+
+	if (BLF != NULL) {
+		fclose(BLF);
+		BLF = NULL;
+	}
+
+	if (conf.allow_control)
+		control_finish();
+
+	if (!conf.debug)
+		net_finish();
+
+	ifctrl_finish();
+}
+
+void handle_user_input(void)
+{
+	int key;
+	key = getch();
+
+	printf("POQ\n");
+
+	switch(key) {
+		case ' ': case 'p': case 'P':
+			main_pause(conf.paused = conf.paused ? 0 : 1);
+			break;
+
+		case 'q': case 'Q':
+			printf("SALIENDO Q q\n"); exit_handler_quit(); break;
+
+		case 'r': case 'R':
+			main_reset();
+			break;
+	}
+}
 static void receive_any(const sigset_t *const waitmask)
 {
 	int ret, mfd;
@@ -527,8 +575,8 @@ static void receive_any(const sigset_t *const waitmask)
 		err(1, "select()");
 
 	/* stdin */
-	/*if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)
-		handle_user_input();*/
+	/*if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)*/
+		handle_user_input();
 
 	/* local packet or client */
 	if (FD_ISSET(mon, &read_fds)) {
