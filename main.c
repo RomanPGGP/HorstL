@@ -514,24 +514,23 @@ void exit_handler_quit(void)
 	if (!conf.debug)
 		net_finish();
 
+	printf("sal\n");
 	ifctrl_finish();
 }
 
 void handle_user_input(void)
 {
-	int key;
+	char key;
 	key = getch();
 
-	printf("POQ\n");
-
-	key = 'q';
+	
 	switch(key) {
 		case ' ': case 'p': case 'P':
 			main_pause(conf.paused = conf.paused ? 0 : 1);
 			break;
 
 		case 'q': case 'Q':
-			printf("SALIENDO Q q\n"); exit_handler_quit(); break;
+		 	printf("Sal\n"); exit_handler_quit();
 
 		case 'r': case 'R':
 			main_reset();
