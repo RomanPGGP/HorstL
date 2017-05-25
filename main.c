@@ -523,7 +523,6 @@ void handle_user_input(void)
 	int key;
 	key = getch();
 
-	
 	switch(key) {
 		case ' ': case 'p': case 'P':
 			main_pause(conf.paused = conf.paused ? 0 : 1);
@@ -567,7 +566,7 @@ static void receive_any(const sigset_t *const waitmask)
 	if (ret == -1 && errno == EINTR) /* interrupted */
 		return;
 	if (ret == 0) {  
-		if (!conf.quiet && !conf.debug)
+		//if (!conf.quiet && !conf.debug)
 			//update_display_clock();
 		return;
 	}
@@ -575,8 +574,11 @@ static void receive_any(const sigset_t *const waitmask)
 		err(1, "select()");
 
 	/* stdin */
-	if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)
+	if (FD_ISSET(0, &read_fds))
+	{
+		printf("YAYAYAYAYAYAYAYAYAYAYAY\n");
 		handle_user_input();
+	}
 
 	/* local packet or client */
 	if (FD_ISSET(mon, &read_fds)) {
