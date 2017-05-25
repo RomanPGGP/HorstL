@@ -576,6 +576,7 @@ static void receive_any(const sigset_t *const waitmask)
 
 	/* stdin */
 	/*if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)*/
+		printf("nmms ---------------\n");
 		handle_user_input();
 
 	/* local packet or client */
