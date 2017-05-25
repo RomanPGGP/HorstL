@@ -521,7 +521,7 @@ void exit_handler_quit(void)
 void handle_user_input(void)
 {
 	char key;
-	key = getchar();
+	key = getche();
 
 	
 	switch(key) {
@@ -530,7 +530,7 @@ void handle_user_input(void)
 			break;
 
 		case 'q': case 'Q':
-		 	printf("Sal\n"); exit_handler_quit();
+		 	printf("Sal\n"); exit_handler_quit(); break;
 
 		case 'r': case 'R':
 			main_reset();
