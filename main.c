@@ -518,31 +518,13 @@ void exit_handler_quit(void)
 	ifctrl_finish();
 }
 
-void handle_user_input(void)
-{
-	int key=0;
-	key = getch();
-	printf("---Z %c\n", key);
-	printf("----num %d\n", key);
-	switch(key) {
-		case ' ': case 'p': case 'P':
-			main_pause(conf.paused = conf.paused ? 0 : 1);
-			break;
 
-		case 'q': case 'Q':
-		 	printf("Sal\n"); exit_handler_quit(); break;
-
-		case 'r': case 'R':
-			main_reset();
-			break;
-	}
-}
 static void receive_any(const sigset_t *const waitmask)
 {
 	int ret, mfd;
 	uint32_t usecs = UINT32_MAX;
 	struct timespec ts;
-
+	printf("TEST-<>-\n");
 	FD_ZERO(&read_fds);
 	FD_ZERO(&write_fds);
 	FD_ZERO(&excpt_fds);
@@ -602,6 +584,25 @@ static void receive_any(const sigset_t *const waitmask)
 		control_receive_command();
 }
 
+void handle_user_input(void)
+{
+	int key=0;
+	key = getch();
+	printf("---Z %c\n", key);
+	printf("----num %d\n", key);
+	switch(key) {
+		case ' ': case 'p': case 'P':
+			main_pause(conf.paused = conf.paused ? 0 : 1);
+			break;
+
+		case 'q': case 'Q':
+		 	printf("Sal\n"); exit_handler_quit(); break;
+
+		case 'r': case 'R':
+			main_reset();
+			break;
+	}
+}
 void free_lists(void)
 {
 	int i;
@@ -765,7 +766,13 @@ int main(int argc, char** argv)
 	list_head_init(&essids.list);
 	list_head_init(&nodes);
 	init_spectrum();
-
+	
+	keypad(stdscr, TRUE);
+	nonl();		/* tell curses not to do NL->CR/NL on output */
+	cbreak();	/* take input chars one at a time, no wait for \n */
+	curs_set(0);	/* don't show cursor */
+	noecho();
+	nodelay(stdscr, TRUE);
 	//////----Roman Agregado del archivo (1 sola vez). Lectura y conversión de MAC's
 	char *lineptr= NULL;
     size_t read;
