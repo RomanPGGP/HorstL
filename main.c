@@ -522,7 +522,7 @@ void handle_user_input(void)
 {
 	int key;
 	key = getch();
-
+	printf("---Z %c\n", key);
 	switch(key) {
 		case ' ': case 'p': case 'P':
 			main_pause(conf.paused = conf.paused ? 0 : 1);
@@ -574,9 +574,9 @@ static void receive_any(const sigset_t *const waitmask)
 		err(1, "select()");
 
 	/* stdin */
-	if (FD_ISSET(0, &read_fds))
+	if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)
 	{
-		printf("YAYAYAYAYAYAYAYAYAYAYAY\n");
+		printf("YA------\n");
 		handle_user_input();
 	}
 
