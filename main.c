@@ -544,8 +544,8 @@ static void receive_any(const sigset_t *const waitmask)
 	uint32_t usecs = UINT32_MAX;
 	struct timespec ts;
 
-	refresh();
-	
+	endwin();
+
 	FD_ZERO(&read_fds);
 	FD_ZERO(&write_fds);
 	FD_ZERO(&excpt_fds);
