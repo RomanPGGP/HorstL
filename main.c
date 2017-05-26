@@ -777,7 +777,7 @@ int main(int argc, char** argv)
 	cbreak();	/* take input chars one at a time, no wait for \n */
 	//curs_set(0);	/* don't show cursor */
 	noecho();
-	nodelay(stdscr, TRUE);
+	//nodelay(stdscr, TRUE);
 
 	//////----Roman Agregado del archivo (1 sola vez). Lectura y conversión de MAC's
 	char *lineptr= NULL;
