@@ -544,8 +544,9 @@ static void receive_any(const sigset_t *const waitmask)
 	uint32_t usecs = UINT32_MAX;
 	struct timespec ts;
 
-	endwin();
-
+	refresh();
+	deleteln();
+	
 	FD_ZERO(&read_fds);
 	FD_ZERO(&write_fds);
 	FD_ZERO(&excpt_fds);
@@ -769,12 +770,10 @@ int main(int argc, char** argv)
 	SCREEN *s = newterm(NULL, stdin, stdout);
     if (s == 0)
         return(-1);
-	keypad(stdscr, TRUE);
-	//nonl();		/* tell curses not to do NL->CR/NL on output */
+
+	keypad(stdscr, TRUE);		/* tell curses not to do NL->CR/NL on output */
 	cbreak();	/* take input chars one at a time, no wait for \n */
-	//curs_set(0);	/* don't show cursor */
 	noecho();
-	//nodelay(stdscr, TRUE);
 	refresh();
 
 	//////----Roman Agregado del archivo (1 sola vez). Lectura y conversión de MAC's
