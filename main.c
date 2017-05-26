@@ -546,7 +546,7 @@ static void receive_any(const sigset_t *const waitmask)
 
 	refresh();
 	deleteln();
-	
+
 	FD_ZERO(&read_fds);
 	FD_ZERO(&write_fds);
 	FD_ZERO(&excpt_fds);
@@ -772,6 +772,7 @@ int main(int argc, char** argv)
         return(-1);
 
 	keypad(stdscr, TRUE);		/* tell curses not to do NL->CR/NL on output */
+	refresh();
 	cbreak();	/* take input chars one at a time, no wait for \n */
 	noecho();
 	refresh();
