@@ -911,18 +911,19 @@ int main(int argc, char** argv)
 
 	/*if (!conf.quiet && !conf.debug)
 		init_display();*/
+	if(!conf.debug){
+		SCREEN *s = newterm(NULL, stdin, stdout);
+	    if (s == 0)
+	        return(-1);
 
-	SCREEN *s = newterm(NULL, stdin, stdout);
-    if (s == 0)
-        return(-1);
+		keypad(stdscr, TRUE);		/* tell curses not to do NL->CR/NL on output */
+		nonl();
+		cbreak();	/* take input chars one at a time, no wait for \n */
+		noecho();
+		refresh();
+	}
 
-	keypad(stdscr, TRUE);		/* tell curses not to do NL->CR/NL on output */
-	nonl();
-	cbreak();	/* take input chars one at a time, no wait for \n */
-	noecho();
-	refresh();
 
-	
 	if (conf.serveraddr[0] == '\0' && conf.port && conf.allow_client)
 		net_init_server_socket(conf.port);
 
