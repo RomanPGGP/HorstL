@@ -520,9 +520,10 @@ void exit_handler_quit(void)
 
 void handle_user_input(void)
 {
-	int key;
+	int key=0;
 	key = getch();
 	printf("---Z %c\n", key);
+	printf("----num %d\n", key);
 	switch(key) {
 		case ' ': case 'p': case 'P':
 			main_pause(conf.paused = conf.paused ? 0 : 1);
