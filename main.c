@@ -515,7 +515,7 @@ void exit_handler_quit(void)
 	if (!conf.debug)
 		net_finish();
 
-	printf("sassasas\n");
+	endwin();
 	ifctrl_finish();
 	exit(0);
 }
@@ -524,8 +524,6 @@ void handle_user_input(void)
 {
 	int key=0;
 	key = getch();
-	printf("---Z %c\n", key);
-	printf("----num %d\n", key);
 	switch(key) {
 		case ' ': case 'p': case 'P':
 			main_pause(conf.paused = conf.paused ? 0 : 1);
@@ -579,10 +577,7 @@ static void receive_any(const sigset_t *const waitmask)
 
 	/* stdin */
 	if (FD_ISSET(0, &read_fds) && !conf.quiet && !conf.debug)
-	{
-		printf("YA------\n");
 		handle_user_input();
-	}
 
 	/* local packet or client */
 	if (FD_ISSET(mon, &read_fds)) {
@@ -778,6 +773,7 @@ int main(int argc, char** argv)
 	//curs_set(0);	/* don't show cursor */
 	noecho();
 	//nodelay(stdscr, TRUE);
+	refresh();
 
 	//////----Roman Agregado del archivo (1 sola vez). Lectura y conversión de MAC's
 	char *lineptr= NULL;
