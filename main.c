@@ -18,7 +18,7 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> //--
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
@@ -29,6 +29,7 @@
 #include <sys/socket.h>
 #include <net/if.h>
 #include <stdarg.h>
+#include <curses.h>
 
 #include "main.h"
 #include "util.h"
@@ -766,7 +767,7 @@ int main(int argc, char** argv)
 	list_head_init(&essids.list);
 	list_head_init(&nodes);
 	init_spectrum();
-	
+
 	keypad(stdscr, TRUE);
 	nonl();		/* tell curses not to do NL->CR/NL on output */
 	cbreak();	/* take input chars one at a time, no wait for \n */
