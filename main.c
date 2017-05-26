@@ -525,7 +525,14 @@ static void receive_any(const sigset_t *const waitmask)
 	int ret, mfd;
 	uint32_t usecs = UINT32_MAX;
 	struct timespec ts;
-	printf("TEST-<>-\n");
+
+	keypad(stdscr, TRUE);
+	nonl();		/* tell curses not to do NL->CR/NL on output */
+	cbreak();	/* take input chars one at a time, no wait for \n */
+	curs_set(0);	/* don't show cursor */
+	noecho();
+	nodelay(stdscr, TRUE);
+
 	FD_ZERO(&read_fds);
 	FD_ZERO(&write_fds);
 	FD_ZERO(&excpt_fds);
@@ -768,12 +775,7 @@ int main(int argc, char** argv)
 	list_head_init(&nodes);
 	init_spectrum();
 
-	keypad(stdscr, TRUE);
-	nonl();		/* tell curses not to do NL->CR/NL on output */
-	cbreak();	/* take input chars one at a time, no wait for \n */
-	curs_set(0);	/* don't show cursor */
-	noecho();
-	nodelay(stdscr, TRUE);
+	
 	//////----Roman Agregado del archivo (1 sola vez). Lectura y conversión de MAC's
 	char *lineptr= NULL;
     size_t read;
