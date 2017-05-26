@@ -530,7 +530,7 @@ void handle_user_input(void)
 			break;
 
 		case 'q': case 'Q':
-		 	printf("Sal\n"); exit_handler_quit(); break;
+		 	exit_handler_quit(); break;
 
 		case 'r': case 'R':
 			main_reset();
@@ -544,6 +544,8 @@ static void receive_any(const sigset_t *const waitmask)
 	uint32_t usecs = UINT32_MAX;
 	struct timespec ts;
 
+	refresh();
+	
 	FD_ZERO(&read_fds);
 	FD_ZERO(&write_fds);
 	FD_ZERO(&excpt_fds);
